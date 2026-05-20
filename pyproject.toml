@@ -1,0 +1,104 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "voice-duck"
+dynamic = ["version"]
+description = "Sidechain auto-ducking for voice-over music beds — one function, three numbers."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "Trollfabriken AITrix AB", email = "dev@trollfabriken.se" },
+]
+keywords = ["ducking", "sidechain", "audio", "voice", "podcast", "compression"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Sound/Audio :: Mixers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.24",
+    "soundfile>=0.12",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+fast = ["numba>=0.59"]
+dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.4", "build", "scipy"]
+
+[project.urls]
+Homepage = "https://github.com/opusmorale/voice-duck"
+Repository = "https://github.com/opusmorale/voice-duck"
+Issues = "https://github.com/opusmorale/voice-duck/issues"
+
+[project.scripts]
+voice-duck = "voice_duck.cli:main"
+
+[tool.hatch.version]
+path = "src/voice_duck/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/voice_duck"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+exclude = [
+    "/tests",
+    "/benchmarks",
+    "/.github",
+    "/specs",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "RUF",  # ruff-specific
+]
+ignore = [
+    "E501",  # line-too-long, handled by formatter
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B018"]  # allow useless expressions in tests (asserting truthiness etc.)
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+
+[tool.coverage.run]
+source = ["src/voice_duck"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
